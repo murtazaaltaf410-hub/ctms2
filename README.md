@@ -1,145 +1,130 @@
-# Velora Gifts
+# Campus Transport Management System (CTMS)
 
-A premium, production-ready luxury boutique website for handcrafted gourmet cookies and custom cash bouquets.
+**University of Kashmir North Campus** — A production-ready full-stack platform for real-time campus bus tracking, route management, and transport announcements.
 
 ## Tech Stack
 
-- **Next.js 15** (App Router)
-- **React 19** + **TypeScript**
-- **Tailwind CSS 4**
-- **Framer Motion**
-- **MongoDB** + **Mongoose**
-- **NextAuth.js** (Credentials)
-- **next-themes** (Dark Mode)
+| Layer | Technology |
+|-------|------------|
+| Frontend | React 18, Vite, Tailwind CSS, Framer Motion, Leaflet.js |
+| Backend | Node.js, Express.js, Socket.IO |
+| Database | MySQL |
+| Auth | JWT + Bcrypt |
+| Maps | OpenStreetMap via Leaflet |
 
 ## Features
 
-### Public Website
-- Full-screen hero with animations
-- Featured products (cookies & cash bouquets)
-- Dynamic products page with search, filters, and sorting
-- Product detail pages with gallery, reviews, wishlist, and share
-- Custom bouquet order form with image upload and delivery date picker
-- Masonry gallery with lightbox
-- Testimonials page
-- Contact page with WhatsApp, Instagram, map, and FAQ
-- Wishlist & recently viewed products
-- Newsletter subscription
-- Dark mode toggle
-- SEO: metadata, Open Graph, JSON-LD, sitemap, robots.txt
-
-### Admin Dashboard (`/admin`)
-- Secure admin authentication
-- Product CRUD with inventory management
-- Order & custom order management
-- Testimonials management
-- Gallery management
-- Homepage content editor
-- Contact messages inbox
-- Analytics overview
-
-## Getting Started
-
-### 1. Install dependencies
-
-```bash
-npm install
-```
-
-### 2. Configure environment
-
-Copy `.env.example` to `.env.local`:
-
-```bash
-cp .env.example .env.local
-```
-
-Update the values:
-
-```env
-MONGODB_URI=mongodb://localhost:27017/velora-gifts
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your-super-secret-key-change-in-production
-ADMIN_EMAIL=admin@veloragifts.com
-ADMIN_PASSWORD=admin123
-```
-
-### 3. Seed the database
-
-```bash
-npm run seed
-```
-
-### 4. Run development server
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000)
-
-**Admin login:** [http://localhost:3000/login](http://localhost:3000/login)
+- **Real-time bus tracking** with Socket.IO live GPS updates
+- **ETA prediction** with stop-based countdown timers
+- **Role-based dashboards** for Students, Drivers, and Admins
+- **Interactive maps** with route paths, stops, and animated bus markers
+- **Announcements & notifications** with real-time push via Socket.IO
+- **Admin panel** with CRUD for buses, routes, students, drivers
+- **Security**: JWT auth, bcrypt, rate limiting, XSS sanitization, prepared SQL statements, audit trail
+- **Dark/Light mode**, responsive mobile-first UI
 
 ## Project Structure
 
 ```
-src/
-├── app/                    # Next.js App Router pages & API routes
-│   ├── api/               # REST API endpoints
-│   ├── admin/             # Admin dashboard
-│   ├── products/          # Product listing & detail
-│   ├── about/             # About page
-│   ├── custom-order/      # Custom bouquet form
-│   ├── gallery/           # Photo gallery
-│   ├── testimonials/      # Customer reviews
-│   ├── contact/           # Contact & FAQ
-│   └── wishlist/          # Saved products
-├── components/            # React components
-│   ├── admin/             # Admin UI
-│   ├── home/              # Homepage sections
-│   ├── layout/            # Navbar, Footer
-│   ├── products/          # Product cards & detail
-│   ├── shared/            # Reusable utilities
-│   └── ui/                # Base UI components
-├── context/               # React context (wishlist, recently viewed)
-├── lib/                   # Utilities, auth, seed data
-├── models/                # Mongoose schemas
-└── types/                 # TypeScript types
+├── backend/          # Express API + Socket.IO
+├── frontend/         # React + Vite SPA
+├── database/         # MySQL schema & seed SQL
+└── README.md
 ```
 
-## Database Collections
+## Prerequisites
 
-| Collection        | Purpose                          |
-|-------------------|----------------------------------|
-| Users             | Admin & user accounts            |
-| Products          | Cookie & bouquet catalog         |
-| Categories        | Product categories               |
-| Orders            | Standard product orders          |
-| CustomOrders      | Custom bouquet requests          |
-| Testimonials      | Customer reviews                 |
-| GalleryImages     | Gallery photos                   |
-| ContactMessages   | Contact form submissions         |
-| Reviews           | Product reviews                  |
-| HomepageContent   | Editable homepage content        |
+- Node.js 18+
+- MySQL 8.0+
 
-## Color Palette
+## Setup
 
-| Color          | Hex       |
-|----------------|-----------|
-| Cream          | `#FFF8F0` |
-| Warm Beige     | `#EADBC8` |
-| Soft Brown     | `#8B5E3C` |
-| Dark Chocolate | `#3E2723` |
-| Gold           | `#D4AF37` |
+### 1. Database
+
+Create the schema, then seed demo users with **valid bcrypt password hashes**:
+
+```bash
+# Option A (recommended): schema + seed via Node
+cd backend
+cp .env.example .env
+# Set DB_PASSWORD in .env to your local MySQL root password
+npm install
+npm run seed
+```
+
+```bash
+# Option B: schema only via mysql CLI
+mysql -u root -p < database/schema.sql
+cd backend && npm run seed
+```
+
+**Important:** Do not rely on `database/seed.sql` alone for login — it contains placeholder password hashes. Always run `npm run seed` in `backend/` to create working demo accounts.
+
+### 2. Backend
+
+```bash
+cd backend
+cp .env.example .env
+# Edit .env with your MySQL credentials
+npm install
+npm run seed
+npm run dev
+```
+
+Backend runs at **http://localhost:5000**
+
+### 3. Frontend
+
+```bash
+cd frontend
+cp .env.example .env
+npm install
+npm run dev
+```
+
+Frontend runs at **http://localhost:5173**
+
+## Demo Credentials
+
+All accounts use password: **`Password@123`**
+
+| Role | Email |
+|------|-------|
+| Admin | admin@uoknorth.edu.in |
+| Driver | driver1@uoknorth.edu.in |
+| Student | student1@uoknorth.edu.in |
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | /api/auth/login | Login |
+| GET | /api/buses | List buses |
+| GET | /api/routes | List routes |
+| GET | /api/routes/eta | Stop ETA |
+| POST | /api/driver/journey/start | Start journey |
+| POST | /api/driver/location | Share GPS |
+| GET | /api/admin/stats | Admin dashboard stats |
+| POST | /api/announcements | Create announcement |
+
+## Real-Time Events (Socket.IO)
+
+- `bus:location` — Live bus GPS update
+- `bus:status` — Driver status change
+- `announcement:new` — New admin announcement
+- `journey:started` / `journey:ended` — Journey lifecycle
 
 ## Production Deployment
 
-1. Set production environment variables
-2. Use MongoDB Atlas for database
-3. Generate a secure `NEXTAUTH_SECRET`: `openssl rand -base64 32`
-4. Build: `npm run build`
-5. Start: `npm start`
+1. Use a **public** MySQL host in Vercel (Railway, PlanetScale, Aiven, etc.).
+   - Do **not** use internal-only hosts like `mysql.railway.internal` — Vercel cannot reach them.
+   - On Railway: copy **MYSQL_PUBLIC_URL** (or the public TCP proxy URL), not the private URL.
+2. Set `DATABASE_URL=mysql://user:password@public-host:3306/ctms_db` on the backend Vercel project.
+3. Set `JWT_SECRET`, `COOKIE_SECRET`, and `CLIENT_URL` (your frontend Vercel URL).
+4. Run `npm run seed` once against the production database (locally with production `DATABASE_URL` in `.env`).
+5. Set frontend `VITE_API_URL=https://your-backend.vercel.app/api` in Vercel environment variables.
+6. Build frontend: `cd frontend && npm run build`
 
 ## License
 
-Private — All rights reserved.
+Built for University of Kashmir North Campus.
